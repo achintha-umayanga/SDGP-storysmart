@@ -40,7 +40,7 @@ export default function LoginForm() {
           delay: 1,
         }}
       />
-      <div className="container relative flex min-h-screen items-center justify-center">
+      <div className="container flex min-h-screen items-center justify-center">
         <motion.div
           className="absolute right-4 top-4"
           initial={{ opacity: 0, y: -20 }}
@@ -67,7 +67,12 @@ export default function LoginForm() {
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.3 }}
             >
-              <Image src="/logo.jpg" alt="Logo" width={90} height={90} className="object-cover" />
+              <Image 
+                src="/logo.jpg" 
+                alt="Logo" 
+                width={90} 
+                height={90} 
+                className="object-cover" />
             </motion.div>
             <motion.h1
               className="text-3xl font-bold"
