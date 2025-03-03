@@ -69,10 +69,10 @@ export default function SignUpForm() {
               transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.3 }}
             >
               <Image
-                src="/placeholder.svg?height=80&width=80"
+                src="/logo.jpg"
                 alt="Logo"
-                width={80}
-                height={80}
+                width={90}
+                height={90}
                 className="object-cover"
               />
             </motion.div>
