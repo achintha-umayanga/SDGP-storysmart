@@ -4,6 +4,7 @@ import MysteryWordGame from './MisteryWordGame.jsx';
 import RolePlayGame from './RolePlayGame.jsx';
 import StoryCompletionGame from './StoryCompletionGame.jsx';
 import ProfilePage from './ProfilePage.jsx';
+import StoryLine from "./StoryLine.jsx";
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
                 <Route path="/role-play-game" element={<RolePlayGame />} />
                 <Route path="/story-completion-game" element={<StoryCompletionGame />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/story" element={<StoryLine />} />
             </Routes>
         </Router>
     );
