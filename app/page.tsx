@@ -49,8 +49,8 @@ export default function GetStarted() {
           <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202024-11-19%20at%2012.12.16_0621b292.jpg-DQAcfaeKRNtIRlljMb1RsQAnxsGLbh.jpeg"
             alt="StorySmart Logo"
-            width={50}
-            height={50}
+            width={60}
+            height={60}
             className="w-12 h-12 object-contain mix-blend-screen"
           />
         </Link>
