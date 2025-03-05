@@ -1,235 +1,529 @@
-import { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-// Sidebar Component
-const Sidebar = ({ activeLevel, setActiveLevel, levels }) => {
-  return (
-    <div className="d-flex flex-column bg-dark text-white" style={{ height: '100vh', width: '280px' }}>
-      {/* App Title */}
-      <div className="p-3 border-bottom border-light">
-        <h4 className="fw-bold text-center text-white">Story Smart</h4>
-      </div>
+// Game Constants
+const levels = [
+  {
+    id: 1,
+    name: "Level 1",
+    unlocked: true,
+    title: "Greetings & Introductions",
+    description: "Learn basic greetings and how to introduce yourself in English."
+  },
+  {
+    id: 2,
+    name: "Level 2",
+    unlocked: false,
+    title: "Space Vocabulary",
+    description: "Learn words related to space and astronomy."
+  },
+  {
+    id: 3,
+    name: "Level 3",
+    unlocked: false,
+    title: "Action Verbs",
+    description: "Learn common action verbs through space missions."
+  },
+  {
+    id: 4,
+    name: "Level 4",
+    unlocked: false,
+    title: "Asking Questions",
+    description: "Learn how to form questions to gather information."
+  },
+  {
+    id: 5,
+    name: "Level 5",
+    unlocked: false,
+    title: "Final Mission",
+    description: "Use everything you've learned to complete the final mission."
+  },
+];
 
-      {/* Levels Section */}
-      <div className="p-3">
-        <h5 className="mb-3 text-light-emphasis border-bottom pb-2 border-light">Adventure Levels</h5>
-        <div className="d-flex flex-column gap-3">
-          {levels.map((level) => (
-            <button
-              key={level.id}
-              className={`btn d-flex align-items-center ${
-                activeLevel === level.id ? 'btn-success' : 
-                level.unlocked ? 'btn-outline-light' : 'btn-secondary'
-              }`}
-              disabled={!level.unlocked}
-              onClick={() => level.unlocked && setActiveLevel(level.id)}
-              style={{ position: 'relative', textAlign: 'left' }}
-            >
-              <span className="me-2 fs-5">{level.emoji}</span>
-              <div>
-                <div className="fw-bold">Level {level.id}</div>
-                <small>{level.name}</small>
-              </div>
-              {!level.unlocked && (
-                <span className="position-absolute top-50 end-0 translate-middle-y me-3">🔒</span>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Progress Section */}
-      <div className="p-3 mt-2">
-        <h6 className="text-white mb-2">Overall Progress</h6>
-        <div className="progress" style={{ height: '25px', backgroundColor: '#343a40' }}>
-          <div
-            className="progress-bar bg-warning text-dark fw-bold"
-            role="progressbar"
-            style={{ width: '15%' }}
-            aria-valuenow="15"
-            aria-valuemin="0"
-            aria-valuemax="100"
-          >
-            15%
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+// Characters
+const characters = {
+  captain: {
+    name: "Captain Nova",
+    color: "#4dabf7",
+    avatar: "👩‍🚀"
+  },
+  alien: {
+    name: "Zorb",
+    color: "#40c057",
+    avatar: "👽"
+  },
+  robot: {
+    name: "Byte",
+    color: "#f783ac",
+    avatar: "🤖"
+  }
 };
 
-// Level 1 Component - Story Adventure
-const Level1 = () => {
-  const [storyStep, setStoryStep] = useState(0);
-  const [userChoices, setUserChoices] = useState([]);
-  const [learningPoints, setLearningPoints] = useState(0);
+// Game content for Level 1
+const level1Content = [
+  {
+    speaker: "captain",
+    text: "Welcome to the StarQuest! I'm Captain Nova. What's your name?",
+    choices: null,
+    needsContinue: true
+  },
+  {
+    speaker: "alien",
+    text: "Hello! I'm Zorb from Planet Lexicon. We speak many languages here!",
+    choices: null,
+    needsContinue: true
+  },
+  {
+    speaker: "robot",
+    text: "Greetings, human! I am Byte, your robot assistant. I will help you learn English.",
+    choices: null,
+    needsContinue: true
+  },
+  {
+    speaker: "robot",
+    text: "Let's practice greetings! How would you respond when someone says 'Hello, how are you?'",
+    choices: [
+      { id: 1, text: "I'm fine, thank you. And you?", correct: true },
+      { id: 2, text: "Yes, hello for you.", correct: false },
+      { id: 3, text: "I am a human person.", correct: false }
+    ],
+    needsContinue: false,
+  },
+  {
+    speaker: "alien",
+    text: "On my planet, we introduce ourselves with our name and something we like. Try it!",
+    choices: [
+      { id: 1, text: "My name is [name] and I like space exploration.", correct: true },
+      { id: 2, text: "I am called [name].", correct: false },
+      { id: 3, text: "The name is [name]. Remember it.", correct: false }
+    ],
+    needsContinue: false,
+  },
+  {
+    speaker: "captain",
+    text: "Great! Now let's learn how to say goodbye. Which is the best way to end a conversation?",
+    choices: [
+      { id: 1, text: "End transmission.", correct: false },
+      { id: 2, text: "Goodbye, it was nice talking to you!", correct: true },
+      { id: 3, text: "I go now.", correct: false }
+    ],
+    needsContinue: false,
+  }
+];
+
+export default function StoryLine() {
+  const [userLevels, setUserLevels] = useState(levels);
+  const [currentLevel, setCurrentLevel] = useState(null);
+  const [playerName, setPlayerName] = useState("");
+  const [nameEntered, setNameEntered] = useState(false);
+  const [gameStep, setGameStep] = useState(0);
+  const [score, setScore] = useState(0);
+  const [coins, setCoins] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [feedbackText, setFeedbackText] = useState("");
+  const [levelComplete, setLevelComplete] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
   const [shake, setShake] = useState(false);
+  const [characterAnimation, setCharacterAnimation] = useState("");
 
-  // Characters with color themes from new code
-  const characters = {
-    maya: { name: "Maya", color: "#FF6B6B", emoji: "👩‍🦱", description: "A friendly guide" },
-    leo: { name: "Leo", color: "#4ECDC4", emoji: "🧙‍♂️", description: "A wise wizard" },
-    sam: { name: "Sam", color: "#FFD166", emoji: "🐉", description: "A small dragon" }
+  // Handle level selection
+  const handleLevelClick = (level) => {
+    if (level.unlocked) {
+      setCurrentLevel(level);
+      setGameStep(0);
+      setLevelComplete(false);
+      setScore(0);
+    }
   };
 
-  // Story content with black backgrounds instead of gradients
-  const storyContent = [
-    {
-      type: "intro",
-      background: "black",
-      content: "Welcome to the Enchanted Forest! In this adventure, you'll learn English while exploring a magical world.",
-      actions: [
-        { text: "Begin Adventure", nextStep: 1 }
-      ]
-    },
-    {
-      type: "dialog",
-      speaker: characters.maya,
-      background: "black",
-      content: "Hello! My name is Maya. Welcome to the Enchanted Forest! What's your name?",
-      actions: [
-        { text: "Nice to meet you, Maya! My name is...", nextStep: 2, points: 5 }
-      ]
-    },
-    {
-      type: "dialog",
-      speaker: characters.leo,
-      background: "black",
-      content: "Greetings, traveler! I am Leo, the forest wizard. How are you today?",
-      actions: [
-        { text: "I'm fine, thank you!", nextStep: 3, points: 5 },
-        { text: "I'm great, and you?", nextStep: 3, points: 10 }
-      ]
-    },
-    {
-      type: "dialog",
-      speaker: characters.sam,
-      background: "black",
-      content: "Rawr! I'm Sam the dragon. I'm hungry. Do you have any food?",
-      actions: [
-        { text: "No, I don't have any food.", nextStep: 4, points: 5 },
-        { text: "Sorry, I don't have food. Are you very hungry?", nextStep: 4, points: 10 }
-      ]
-    },
-    {
-      type: "dialog",
-      speaker: characters.maya,
-      background: "black",
-      content: "We need to find the magic crystal. It's in the cave behind the waterfall. Can you help us?",
-      actions: [
-        { text: "Yes, I can help you!", nextStep: 5, points: 5 },
-        { text: "Of course! What should we do first?", nextStep: 5, points: 10 }
-      ]
-    },
-    {
-      type: "dialog",
-      speaker: characters.leo,
-      background: "black",
-      content: "Excellent! Before we go, let me teach you a magic word. Repeat after me: 'Illuminare'!",
-      actions: [
-        { text: "Illuminare!", nextStep: 6, points: 10 }
-      ]
-    },
-    {
-      type: "conclusion",
-      background: "black",
-      content: "Congratulations! You've completed the first chapter of your adventure. You've learned greetings, introductions, expressing needs, and asking for help.",
-      actions: [
-        { text: "Continue to Level 2", nextStep: 0 },
-        { text: "Restart Adventure", nextStep: 0, reset: true }
-      ]
+  // Handle player name submission
+  const handleNameSubmit = (e) => {
+    e.preventDefault();
+    if (playerName.trim()) {
+      setNameEntered(true);
+      triggerCharacterAnimation();
     }
-  ];
+  };
 
-  const currentStep = storyContent[storyStep];
+  // Handle continue button for dialogue without choices
+  const handleContinue = () => {
+    if (gameStep < level1Content.length - 1) {
+      setFadeOut(true);
+      setTimeout(() => {
+        setGameStep(gameStep + 1);
+        setFadeOut(false);
+        triggerCharacterAnimation();
+      }, 500);
+    }
+  };
 
-  // Handle user choice
-  const handleChoice = (action) => {
-    if (action.points) {
-      const correct = action.points > 5;
-      setIsCorrect(correct);
-      setFeedbackText(correct ?
-        `Great job! +${action.points} learning points!` :
-        "That works, but there's a better answer. +5 learning points.");
+  // Handle player choice selection
+  const handleChoiceSelect = (choice) => {
+    const currentContent = level1Content[gameStep];
+
+    if (currentContent.choices) {
+      const selectedChoice = currentContent.choices.find(c => c.id === choice.id);
+
+      if (selectedChoice.correct) {
+        setIsCorrect(true);
+
+        // Add score and coins
+        const pointsEarned = 10;
+        const coinsEarned = 25;
+        setScore(score + pointsEarned);
+        setCoins(coins + coinsEarned);
+
+        setFeedbackText(`Excellent! That's correct! +${pointsEarned} points, +${coinsEarned} coins`);
+
+        // If this is the last question, check if we should unlock next level
+        if (gameStep === level1Content.length - 1) {
+          const updatedLevels = [...userLevels];
+          if (currentLevel.id < 5) {
+            updatedLevels[currentLevel.id].unlocked = true;
+          }
+          setUserLevels(updatedLevels);
+
+          // Add final completion bonus
+          const levelBonus = 50;
+          const coinBonus = 100;
+          setScore(prevScore => prevScore + levelBonus);
+          setCoins(prevCoins => prevCoins + coinBonus);
+
+          setTimeout(() => {
+            setLevelComplete(true);
+          }, 2500);
+        }
+      } else {
+        setIsCorrect(false);
+        setFeedbackText("Not quite right. Try again!");
+        setShake(true);
+        setTimeout(() => setShake(false), 500);
+      }
+
       setShowFeedback(true);
 
-      setTimeout(() => {
-        setShowFeedback(false);
-        processAction(action);
-      }, 2000);
-    } else {
-      processAction(action);
+      // Auto-advance after feedback if correct
+      if (selectedChoice.correct) {
+        setTimeout(() => {
+          setShowFeedback(false);
+          if (gameStep < level1Content.length - 1) {
+            setFadeOut(true);
+            setTimeout(() => {
+              setGameStep(gameStep + 1);
+              setFadeOut(false);
+              triggerCharacterAnimation();
+            }, 500);
+          }
+        }, 2000);
+      } else {
+        setTimeout(() => {
+          setShowFeedback(false);
+        }, 2000);
+      }
     }
   };
 
-  const processAction = (action) => {
-    if (action.points) {
-      setLearningPoints(prev => prev + action.points);
-    }
+  // Restart level
+  const handleRestartLevel = () => {
+    setGameStep(0);
+    setScore(0);
+    setLevelComplete(false);
+    triggerCharacterAnimation();
+  };
 
-    if (action.reset) {
-      setStoryStep(0);
-      setUserChoices([]);
-      setLearningPoints(0);
-    } else {
-      setStoryStep(action.nextStep);
-      setUserChoices([...userChoices, action.text]);
+  // Proceed to next level
+  const handleNextLevel = () => {
+    const nextLevelId = currentLevel.id + 1;
+    const nextLevel = userLevels.find(level => level.id === nextLevelId);
+    if (nextLevel && nextLevel.unlocked) {
+      setCurrentLevel(nextLevel);
+      setGameStep(0);
+      setLevelComplete(false);
+      triggerCharacterAnimation();
     }
   };
 
-  // Message styling based on the newer code's style
+  // Trigger character animation
+  const triggerCharacterAnimation = () => {
+    setCharacterAnimation("animate");
+    setTimeout(() => setCharacterAnimation(""), 1000);
+  };
+
+  // Replace [name] placeholder with player's name
+  const replaceNamePlaceholder = (text) => {
+    return text.replace("[name]", playerName);
+  };
+
+  // Get current content based on game step
+  const getCurrentContent = () => {
+    if (gameStep < level1Content.length) {
+      return level1Content[gameStep];
+    }
+    return null;
+  };
+
+  const currentContent = getCurrentContent();
+
+  // Styling
   const messageStyle = (speaker) => ({
-    backgroundColor: `${characters[speaker].color}33`,
-    borderLeft: `5px solid ${characters[speaker].color}`,
-    borderRadius: "12px",
+    backgroundColor: characters[speaker].color,
+    borderRadius: "20px",
     padding: "15px",
     marginBottom: "20px",
     maxWidth: "80%",
     boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-    transition: "transform 0.3s ease-in-out",
+    transform: characterAnimation === "animate" ? "scale(1.05)" : "scale(1)",
+    transition: "transform 0.5s ease-in-out, opacity 0.5s ease-in-out",
+    opacity: fadeOut ? 0 : 1,
   });
 
-  // Renders stars in the background like in the newer code
-  const renderStarBackground = () => {
-    return (
-      <div className="position-absolute top-0 start-0 w-100 h-100 overflow-hidden" style={{ zIndex: 0 }}>
-        {Array.from({ length: 50 }).map((_, i) => (
-          <div
-            key={i}
-            className="position-absolute rounded-circle bg-white"
-            style={{
-              width: `${Math.random() * 3 + 1}px`,
-              height: `${Math.random() * 3 + 1}px`,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              opacity: Math.random() * 0.8 + 0.2,
-              animation: `twinkle ${Math.random() * 5 + 2}s infinite`
-            }}
-          ></div>
-        ))}
-      </div>
-    );
-  };
-
   return (
-    <div className="container py-4 position-relative" style={{ minHeight: "90vh" }}>
-      {/* Add stars background */}
-      {renderStarBackground()}
+      <div className="vh-100 d-flex flex-column bg-dark text-white overflow-hidden">
+        <div className="d-flex flex-grow-1 overflow-hidden">
+          {/* Sidebar */}
+          <div
+              className="d-flex flex-column p-3 bg-black bg-opacity-75 overflow-auto"
+              style={{
+                width: "280px",
+                backdropFilter: "blur(10px)",
+                borderRight: "2px solid rgba(255,255,255,0.1)"
+              }}
+          >
+            <div className="text-center mb-4">
+              <h1 className="display-6 fw-bold text-primary mb-2">
+                Story Smart
+              </h1>
+              <p className="text-muted small">Space English Learning Adventure</p>
+            </div>
 
-      {/* Add animation styles */}
-      <style>
-        {`
+            {/* Level Selection */}
+            <div className="levels-container flex-grow-1 overflow-auto pe-2">
+              {userLevels.map((level) => (
+                  <button
+                      key={level.id}
+                      className={`btn mb-3 w-100 d-flex align-items-center level-name ${
+                          level.unlocked
+                              ? "btn-outline-light text-light"
+                              : "btn-secondary text-muted"
+                      } ${currentLevel?.id === level.id ? "border-3 border-light" : ""}`}
+                      onClick={() => handleLevelClick(level)}
+                      disabled={!level.unlocked}
+                  >
+                    {level.unlocked ? (
+                        <span className="me-3">🚀</span>
+                    ) : (
+                        <span className="me-3">🔒</span>
+                    )}
+                    <div className="text-start flex-grow-1">
+                      <div className="fw-bold level-name">{level.name}</div>
+                      <small className="text-light d-block level-name">{level.title}</small>
+                    </div>
+                  </button>
+              ))}
+            </div>
+
+            {/* Player Stats */}
+            {currentLevel && nameEntered && (
+                <div className="mt-4 p-3 bg-dark rounded shadow">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <span>Player:</span>
+                    <span className="fw-bold">{playerName}</span>
+                  </div>
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Score:</span>
+                    <span className="fw-bold">{score}</span>
+                  </div>
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Coins:</span>
+                    <span className="fw-bold text-warning">
+                  <span className="me-1">💰</span>
+                      {coins}
+                </span>
+                  </div>
+                  <div className="progress mt-2">
+                    <div
+                        className="progress-bar bg-success"
+                        role="progressbar"
+                        style={{ width: `${(gameStep / level1Content.length) * 100}%` }}
+                        aria-valuenow={(gameStep / level1Content.length) * 100}
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                    ></div>
+                  </div>
+                </div>
+            )}
+
+          </div>
+
+          {/* Main Game Area */}
+          <div className="flex-grow-1 d-flex flex-column position-relative overflow-hidden p-4 m-4">
+            {/* Stars background effect */}
+            <div className="position-absolute top-0 start-0 w-100 h-100 overflow-hidden" style={{ zIndex: 0 }}>
+              {Array.from({ length: 50 }).map((_, i) => (
+                  <div
+                      key={i}
+                      className="position-absolute rounded-circle bg-white"
+                      style={{
+                        width: `${Math.random() * 3 + 1}px`,
+                        height: `${Math.random() * 3 + 1}px`,
+                        top: `${Math.random() * 100}%`,
+                        left: `${Math.random() * 100}%`,
+                        opacity: Math.random() * 0.8 + 0.2,
+                        animation: `twinkle ${Math.random() * 5 + 2}s infinite`
+                      }}
+                  ></div>
+              ))}
+            </div>
+
+            {/* Main Content Area */}
+            <div className="flex-grow-1 d-flex flex-column justify-content-center align-items-center position-relative" style={{ zIndex: 1 }}>
+              {/* Initial Screen - No Level Selected */}
+              {!currentLevel ? (
+                  <div className="text-center">
+                    <h1 className="display-4 mb-4">Space English Adventure</h1>
+                    <p className="lead mb-4">Learn English while exploring the galaxy!</p>
+                    <p className="mb-5">Select Level 1 to begin your journey.</p>
+                    <div className="d-flex justify-content-center gap-5">
+                      {Object.values(characters).map((char) => (
+                          <div key={char.name} className="text-center animate">
+                            <div className="display-1 mb-2">{char.avatar}</div>
+                            <p style={{color: char.color}}>{char.name}</p>
+                          </div>
+                      ))}
+                    </div>
+                  </div>
+              ) : (
+                  <>
+                    {/* Name Entry Screen */}
+                    {!nameEntered ? (
+                        <div className="bg-dark bg-opacity-75 p-5 rounded shadow-lg text-center">
+                          <h2 className="mb-4">{currentLevel.title}</h2>
+                          <p className="mb-4">{currentLevel.description}</p>
+                          <div className="mb-4">
+                            <div className="display-1 mb-3">👩‍🚀</div>
+                            <p className="lead">Captain Nova needs to know your name before we begin our mission!</p>
+                          </div>
+                          <form onSubmit={handleNameSubmit} className="d-flex flex-column align-items-center">
+                            <input
+                                type="text"
+                                className="form-control mb-3 w-75"
+                                placeholder="Enter your name"
+                                value={playerName}
+                                onChange={(e) => setPlayerName(e.target.value)}
+                                required
+                            />
+                            <button type="submit" className="btn btn-primary px-4">
+                              Start Mission
+                            </button>
+                          </form>
+                        </div>
+                    ) : levelComplete ? (
+                        <div className="bg-dark bg-opacity-75 p-5 rounded shadow-lg text-center">
+                          <div className="display-1 mb-3">🎉</div>
+                          <h2 className="mb-3">Level Complete!</h2>
+                          <div className="alert alert-success">
+                            <p className="fs-4 mb-2">+50 bonus points!</p>
+                            <p className="fs-4">+100 bonus coins!</p>
+                          </div>
+                          <p className="lead mb-4">Congratulations! You&#39;ve completed {currentLevel.title}.</p>
+
+                          <div className="d-flex justify-content-between mb-4 p-3 bg-dark rounded">
+                            <div className="text-center px-4">
+                              <h5>Final Score</h5>
+                              <p className="fs-3 fw-bold">{score}</p>
+                            </div>
+                            <div className="text-center px-4">
+                              <h5>Coins Earned</h5>
+                              <p className="fs-3 fw-bold text-warning">
+                                <span className="me-2">💰</span>
+                                {coins}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="d-flex justify-content-center gap-3">
+                            <button className="btn btn-secondary" onClick={handleRestartLevel}>
+                              Replay Level
+                            </button>
+                            {currentLevel.id < 5 && userLevels[currentLevel.id].unlocked && (
+                                <button className="btn btn-primary" onClick={handleNextLevel}>
+                                  Next Level →
+                                </button>
+                            )}
+                          </div>
+                        </div>
+                    ) : currentContent ? (
+                        <div className="w-100 d-flex flex-column game-content">
+                          <div className={`d-flex ${currentContent.speaker === 'captain' || currentContent.speaker === 'robot' ? 'justify-content-start' : 'justify-content-end'}`}>
+                            <div className="d-flex gap-3 align-items-start" style={messageStyle(currentContent.speaker)}>
+                              <div className="fs-1 mt-2 animate">
+                                {characters[currentContent.speaker].avatar}
+                              </div>
+                              <div>
+                                <div className="fw-bold mb-2" style={{ color: "#000" }}>
+                                  {characters[currentContent.speaker].name}
+                                </div>
+                                <div style={{ fontSize: "1.1rem" }}>
+                                  {currentContent.choices
+                                      ? replaceNamePlaceholder(currentContent.text)
+                                      : currentContent.text}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {currentContent.choices && (
+                              <div className="mt-4">
+                                <div className={`d-flex flex-column gap-3 ${shake ? 'shake' : ''}`}>
+                                  {currentContent.choices.map(choice => (
+                                      <button
+                                          key={choice.id}
+                                          className="choice-btn btn btn-outline-light text-start p-3 transition-all"
+                                          onClick={() => handleChoiceSelect(choice)}
+                                          disabled={showFeedback}
+                                      >
+                                        {replaceNamePlaceholder(choice.text)}
+                                      </button>
+                                  ))}
+                                </div>
+                              </div>
+                          )}
+
+                          {currentContent.needsContinue && (
+                              <div className="mt-4 d-flex justify-content-center">
+                                <button
+                                    className="continue-btn btn btn-primary px-4 py-2"
+                                    onClick={handleContinue}
+                                >
+                                  Continue →
+                                </button>
+                              </div>
+                          )}
+
+                          {showFeedback && (
+                              <div className={`mt-3 alert ${isCorrect ? 'alert-success' : 'alert-danger'} animate`}>
+                                {feedbackText}
+                              </div>
+                          )}
+                        </div>
+                    ) : null}
+                  </>
+              )}
+
+            </div>
+          </div>
+        </div>
+
+        {/* Animations and Styles */}
+        <style>
+          {`
           @keyframes twinkle {
             0% { opacity: 0.2; }
             50% { opacity: 1; }
             100% { opacity: 0.2; }
           }
           .choice-btn:hover {
-            background-color: gray;
-            border-color: gray;
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.3);
           }
@@ -241,135 +535,48 @@ const Level1 = () => {
             10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
             20%, 40%, 60%, 80% { transform: translateX(5px); }
           }
+          .animate {
+            animation: pop 0.5s;
+          }
+          @keyframes pop {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+          }
+          .continue-btn {
+            transition: all 0.3s;
+          }
+          .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+          }
+          .continue-btn:active {
+            transform: translateY(0);
+          }
+          .badge-popup {
+            animation: badgePop 0.5s, badgeGlow 1.5s infinite alternate;
+          }
+          @keyframes badgePop {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+          }
+          @keyframes badgeGlow {
+            0% { box-shadow: 0 0 10px gold; }
+            100% { box-shadow: 0 0 25px gold; }
+          }
+          .badge-icon {
+            animation: pulse 1s infinite alternate;
+          }
+          @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+          }
+          .btn-outline-light:hover {
+            background-color: darkgray
+          }
         `}
-      </style>
-
-      <div
-        className="card text-white  shadow-lg"
-        style={{
-          background: "black",
-          minHeight: '500px',
-          position: "relative",
-          zIndex: "1",
-          margin: "8%"
-        }}
-      >
-        <div className="card-header d-flex justify-content-between align-items-center">
-          <h2>Level 1: Beginner&#39;s Journey</h2>
-        </div>
-
-        <div className="card-body p-4">
-          {currentStep.type === "dialog" && (
-            <div
-              className="p-3 mb-4 rounded-3"
-              style={messageStyle(currentStep.speaker.name.toLowerCase())}
-            >
-              <div className="d-flex align-items-center mb-2">
-                <span className="fs-1 me-2">{currentStep.speaker.emoji}</span>
-                <h3 style={{ color: currentStep.speaker.color }}>{currentStep.speaker.name}</h3>
-              </div>
-              <p className="fs-4">{currentStep.content}</p>
-            </div>
-          )}
-
-          {(currentStep.type === "intro" || currentStep.type === "conclusion") && (
-            <div className="text-center my-4">
-              <h3 className="mb-3">{currentStep.content}</h3>
-            </div>
-          )}
-
-          {currentStep.lesson && (
-            <div className="alert alert-info mt-3">
-              <strong>Learning Point:</strong> {currentStep.lesson}
-            </div>
-          )}
-
-          <div className={`d-flex flex-column gap-3 mt-4 ${shake ? 'shake' : ''}`}>
-            {currentStep.actions.map((action, index) => (
-              <button
-                key={index}
-                className="choice-btn btn btn-outline-light text-start p-3 transition-all"
-                onClick={() => handleChoice(action)}
-                disabled={showFeedback}
-              >
-                {action.text}
-              </button>
-            ))}
-          </div>
-
-          {showFeedback && (
-            <div className={`mt-3 alert ${isCorrect ? 'alert-success' : 'alert-warning'}`}>
-              {feedbackText}
-            </div>
-          )}
-        </div>
+        </style>
       </div>
-    </div>
   );
-};
-
-// Level 2 Component
-const Level2 = () => {
-  return (
-    <div className="container py-4">
-      <div
-        className="card text-white border-light"
-        style={{
-          background: "black",
-          minHeight: '500px'
-        }}
-      >
-        <div className="card-header">
-          <h2>Level 2: Grammar Explorer</h2>
-        </div>
-        <div className="card-body">
-          <div className="alert alert-warning">
-            <h4>This level is currently locked!</h4>
-            <p>Complete Level 1 to unlock this adventure.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Main App Component
-const StoryLine = () => {
-  const [activeLevel, setActiveLevel] = useState(1);
-
-  const levels = [
-    { id: 1, name: "Beginner's Journey", emoji: "📚", unlocked: true },
-    { id: 2, name: "Grammar Explorer", emoji: "🎓", unlocked: false },
-    { id: 3, name: "Vocabulary Quest", emoji: "⭐", unlocked: false },
-    { id: 4, name: "Conversation Master", emoji: "🎯", unlocked: false },
-    { id: 5, name: "Cultural Expedition", emoji: "🌍", unlocked: false },
-    { id: 6, name: "Fluency Summit", emoji: "🏆", unlocked: false }
-  ];
-
-  // Render appropriate level content
-  const renderLevelContent = () => {
-    switch(activeLevel) {
-      case 1:
-        return <Level1 />;
-      case 2:
-        return <Level2 />;
-      default:
-        return <div className="container py-4 text-white"><h2>Select a level to begin</h2></div>;
-    }
-  };
-
-  return (
-    <div className="d-flex bg-dark" style={{ minHeight: '100vh' }}>
-      <Sidebar
-        activeLevel={activeLevel}
-        setActiveLevel={setActiveLevel}
-        levels={levels}
-      />
-      <div className="flex-grow-1 bg-black">
-        {renderLevelContent()}
-      </div>
-    </div>
-  );
-};
-
-export default StoryLine;
+}
