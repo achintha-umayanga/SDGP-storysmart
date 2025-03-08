@@ -69,7 +69,7 @@ const level1Content = [
   },
   {
     speaker: "alien",
-    text: "Hello! I'm Zorb from Planet Lexicon. We speak many languages here!",
+    text: "Hello! I'm leevi from Planet Lexicon. We speak many languages here!",
     choices: null,
     needsContinue: true
   },
@@ -81,7 +81,7 @@ const level1Content = [
   },
   {
     speaker: "robot",
-    text: "Let's practice greetings! How would you respond when someone says 'Hello, how are you?'",
+    text: "Let's start practicing from the basics! How would you respond when someone says 'Hello, how are you?'",
     choices: [
       { id: 1, text: "I'm fine, thank you. And you?", correct: true },
       { id: 2, text: "Yes, hello for you.", correct: false },
