@@ -83,9 +83,9 @@ const level1Content = [
     speaker: "robot",
     text: "Let's start practicing from the basics! How would you respond when someone says 'Hello, how are you?'",
     choices: [
-      { id: 1, text: "I'm fine, thank you. And you?", correct: true },
-      { id: 2, text: "Yes, hello for you.", correct: false },
-      { id: 3, text: "I am a human person.", correct: false }
+      { id: 1, text: "I'm fine, thank you. what about you?", correct: true },
+      { id: 2, text: "Yes fine, hello for you.", correct: false },
+      { id: 3, text: "I am a human .", correct: false }
     ],
     needsContinue: false,
   },
