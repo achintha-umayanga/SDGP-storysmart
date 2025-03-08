@@ -91,11 +91,11 @@ const level1Content = [
   },
   {
     speaker: "alien",
-    text: "On my planet, we introduce ourselves with our name and something we like. Try it!",
+    text: "On my planet, we introduce ourselves with our name and something we like. wanna try it!",
     choices: [
-      { id: 1, text: "My name is [name] and I like space exploration.", correct: true },
+      { id: 1, text: " My name is [name] and I like space exploration.", correct: true },
       { id: 2, text: "I am called [name].", correct: false },
-      { id: 3, text: "The name is [name]. Remember it.", correct: false }
+      { id: 3, text: "[name]. Remember it.", correct: false }
     ],
     needsContinue: false,
   },
