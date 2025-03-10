@@ -26,6 +26,11 @@ export function Sidebar({ setShowPlayContentAction }: SidebarProps) {
   const [error, setError] = useState("");
   const modalRef = useRef<HTMLDivElement>(null);
 
+  // Refresh handler
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   // Guide Steps
   const guideSteps = [
     { step: 1, title: "Sign Up or Sign In", description: "Create an account to access all features." },
@@ -89,15 +94,18 @@ export function Sidebar({ setShowPlayContentAction }: SidebarProps) {
 
   return (
     <div className="flex h-screen w-[80px] md:w-[260px] flex-col items-center border-r bg-white p-2 md:p-4">
-      {/* Logo and Text */}
-      <div className="mt-4 md:mt-6 mb-8 flex items-center gap-2">
+      {/* Logo and Text with Refresh Handler */}
+      <button 
+        onClick={handleRefresh}
+        className="mt-4 md:mt-6 mb-8 flex items-center gap-2 bg-transparent border-none cursor-pointer"
+      >
         <img
           src={logoImage.src}
           alt="StorySmart"
           className="h-8 md:h-10"
         />
         <span className="hidden md:inline text-2xl font-bold text-gray-900">STORYSMART</span>
-      </div>
+      </button>
 
       {/* Navigation */}
       <nav className="flex flex-col space-y-2 md:space-y-4 w-full -ml-2 md:-ml-4">
@@ -164,7 +172,9 @@ export function Sidebar({ setShowPlayContentAction }: SidebarProps) {
                 <div className="grid grid-cols-5 gap-4 font-semibold text-gray-700 mb-4 bg-white/80 backdrop-blur-sm py-3 rounded-lg">
                   <div>Rank</div>
                   <div>Player</div>
-                 
+                  <div>Score</div>
+                  <div>Badges</div>
+                  <div>Levels</div>
                 </div>
                 {leaderboardData.map((player) => (
                   <div
