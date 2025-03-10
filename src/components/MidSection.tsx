@@ -198,7 +198,7 @@ interface MidSectionProps {
   
             {/* Quiz Buttons for Section 1 */}
             <div className="flex flex-col items-center space-y-1 md:space-y-2">
-              {Array.from({ length: 6}).map((_, i) => (
+              {Array.from({ length: 5}).map((_, i) => (
                 <button key={i} className="bg-blue-500 text-white px-3 py-1 md:px-4 md:py-2 rounded-lg shadow w-32 md:w-40">
                   Task {i + 1}
                 </button>
