@@ -140,6 +140,42 @@ interface MidSectionProps {
             <div className="w-full border-t border-gray-300"></div>
             <div className="absolute bg-white px-2 text-gray-600">The Tower of Time</div>
           </div>
+
+
+          <div className="w-full bg-orange-400 text-white p-3 md:p-4 flex justify-between items-center rounded-lg mb-4 md:mb-8">
+            <div>
+              <p className="text-xs md:text-sm font-semibold">SECTION 4, UNIT 4</p>
+              <h1 className="text-lg md:text-xl font-bold">  The Echoing Caverns </h1>
+            </div>
+            <button className="bg-white text-green-600 font-medium px-3 py-1 md:px-4 md:py-2 rounded-lg shadow">
+              GUIDEBOOK
+            </button>
+          </div>
+  
+  
+          {/* Start Button for Section 1 */}
+          <div className="flex flex-col items-center mb-4 md:mb-8">
+            <button className="bg-green-500 text-white px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg text-md md:text-lg mb-2 md:mb-4">
+              START
+            </button>
+  
+  
+            {/* Quiz Buttons for Section 1 */}
+            <div className="flex flex-col items-center space-y-1 md:space-y-2">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <button key={i} className="bg-blue-500 text-white px-3 py-1 md:px-4 md:py-2 rounded-lg shadow w-32 md:w-40">
+                  Task {i + 1}
+                </button>
+              ))}
+            </div>
+          </div>
+  
+          {/* Horizontal Line for Section 1 with Text */}
+          <div className="relative flex items-center justify-center w-full mb-4 md:mb-8">
+            <div className="w-full border-t border-gray-300"></div>
+            <div className="absolute bg-white px-2 text-gray-600">The Tower of Time</div>
+          </div>
+
         </div>
       )
     }
