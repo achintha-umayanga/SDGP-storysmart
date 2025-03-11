@@ -1,0 +1,26 @@
+{
+  "type": "Compass Connections",
+  "version": {
+    "$numberInt": "1"
+  },
+  "connections": [
+    {
+      "id": "0246407c-c2c5-46d9-b1f7-0c5fea3dd00d",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1740996948149"
+        }
+      },
+      "favorite": {
+        "name": "cluster0.ocbfb.mongodb.net"
+      },
+      "savedConnectionType": "recent",
+      "connectionOptions": {
+        "connectionString": "mongodb+srv://thisakyakarunarathna:Thisakya_2006@cluster0.ocbfb.mongodb.net/",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjowLCJzdGF0ZSI6W119"
+        }
+      }
+    }
+  ]
+}
